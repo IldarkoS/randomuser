@@ -4,6 +4,8 @@ class Settings(BaseSettings):
     RANDOM_USER_API_URL: str
     PAGE_LIMIT: int
 
+    USERS_ON_START: int
+
     DB_HOST: str
     DB_PORT: int
     DB_USER: str

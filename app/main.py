@@ -1,7 +1,9 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from loguru import logger
 
+from app.config import settings
 from app.delivery.views import users as user_views
 from app.services.user_service import UserService
 
@@ -17,8 +19,9 @@ def get_user_service() -> UserService:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info(f"Application started!")
     user_service = get_user_service()
-    await user_service.load_users(1000)
+    await user_service.load_users(settings.USERS_ON_START)
     yield
 
 app = FastAPI(lifespan=lifespan)
