@@ -4,7 +4,7 @@ from sqlalchemy import Column, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
-from app.adapters.db.database import Base
+from app.core.db import Base
 
 
 class User(Base, AsyncAttrs):

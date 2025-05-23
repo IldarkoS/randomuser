@@ -7,8 +7,7 @@ from sqlalchemy import pool
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
-from app.adapters.db.database import Base
-from app.models.domain.user import User
+from app.core.db import Base
 from app.config import settings
 
 # this is the Alembic Config object, which provides

@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+    @property
+    def DATABASE_DSN(self):
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
 
 settings = Settings()
-settings.__dict__["DATABASE_DSN"] = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"

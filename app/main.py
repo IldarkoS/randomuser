@@ -4,24 +4,21 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.config import settings
+from app.core.db import async_session
+from app.core.logger import init_logger
 from app.delivery.views import users as user_views
-from app.services.user_service import UserService
+from app.depends import get_users_repo, get_users_random_api, get_users_use_case
 
-
-def get_user_service() -> UserService:
-    from app.adapters.db.UserRepoPostgres import UserRepoPostgres
-    from app.adapters.api.RandomUserApiClient import RandomUserApiClient
-    from app.adapters.db.database import async_session
-    return UserService(
-        UserRepoPostgres(async_session),
-        RandomUserApiClient(),
-    )
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_logger()
     logger.info(f"Application started!")
-    user_service = get_user_service()
-    await user_service.load_users(settings.USERS_ON_START)
+    async with async_session() as session:
+        user_repo = get_users_repo(session=session)
+    random_user_api = get_users_random_api()
+    user_use_case = get_users_use_case(user_repo, random_user_api)
+    await user_use_case.load_users(settings.USERS_ON_START)
     yield
 
 app = FastAPI(lifespan=lifespan)
