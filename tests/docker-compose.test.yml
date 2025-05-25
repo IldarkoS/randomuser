@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  test-db:
+    image: postgres:17
+    container_name: test-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}1:${DB_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U testuser" ]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+    env_file:
+      - .env.test
+
+  test-runner:
+    build:
+      context: .
+    depends_on:
+      test-db:
+        condition: service_healthy
+    volumes:
+      - ../.:/app
+    environment:
+      ENV_FILE: tests/.env.test
+    working_dir: /app
+    command: pytest -v
