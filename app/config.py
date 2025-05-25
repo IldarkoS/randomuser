@@ -1,3 +1,5 @@
+import os
+
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -13,7 +15,7 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     class Config:
-        env_file = ".env"
+        env_file = os.environ.get("ENV_FILE", ".env")
 
     @property
     def DATABASE_DSN(self):

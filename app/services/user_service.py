@@ -1,6 +1,7 @@
 from typing import List, Optional, Protocol, Self
 from uuid import UUID
 
+from fastapi.exceptions import HTTPException
 from loguru import logger
 
 from app.adapters.api.RandomUserApiImpl import RandomUserApiProtocol
@@ -35,6 +36,8 @@ class UserServiceImpl(UserServiceProtocol):
 
     async def get_user(self, user_id: UUID) -> Optional[UserSchema]:
         result = await self.user_repo.get_user(user_id)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"User {user_id} not found")
         logger.info(f"Received user with ID: {user_id} !")
         return UserSchema.model_validate(result, from_attributes=True)
 
